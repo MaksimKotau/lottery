@@ -1,0 +1,623 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<title>Loterie 6/49</title>
+		<meta charset="UTF-8"> 
+		<style>
+			body {
+				font-family : sans-serif;
+				background-color : #EEE;
+			}
+			input {
+				outline:none;
+			}
+			.blockDeJeu {
+				width : 700px;
+				height : 500px;
+				box-shadow: 2px 2px 10px 3px #AAA;
+				border : 1px solid #AAA;
+				background-color : white;
+				top: 50%; 
+				left: 50%; 
+				position: absolute;
+				margin-top: -250px; 
+				margin-left: -350px; 
+			}
+			.ligneDeNumberEntree input {
+				width : 70px;
+				height : 70px;
+				margin : 10px;
+				border : 1px solid #d4a3bd;
+				text-align : center;
+				font-size : 50px;
+			}
+			.ligneDeTirage input {
+				width : 70px;
+				height : 70px;
+				margin : 10px;
+				border : 1px solid #d4a3bd;
+				text-align : center;
+				font-size : 50px;
+			}
+			.ligneDeNumberEntree td {
+				height : 100px;
+			}
+			.ligneDeTirage td{
+				height : 100px;
+			}
+			.button {
+				background-color: #C27BA0;
+				border: none;
+				color: white;
+				width : 250px;
+				height : 40px;
+				text-align: center;
+				text-decoration: none;
+				display: inline-block;
+				font-size: 18px;
+				cursor: pointer;
+				box-shadow: 1px 1px 2px 2px #AAA;
+				-moz-border-radius: 2px;
+				-khtml-border-radius: 2px;
+				-webkit-border-radius: 2px;
+				border-radius: 2px;
+				margin : 15px 
+			}
+			.tableDeJeu {
+				width : 600px;
+				margin : auto;
+				margin-top : 30px;
+				table-layout: fixed;
+			}
+			
+			
+			.ligneDeButton {
+				text-align : center;
+				height : 60px;
+			}
+			.teteDeTable td{
+				height : 40px;
+				text-align : center;
+				font-weight : 700;
+			}
+			
+			.dropbtn {
+				background-color: #c27ba0;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border: none;
+				cursor: pointer;
+			}
+
+			.dropbtn:hover, .dropbtn:focus {
+				background-color: #9f4b73;
+			}
+			
+			.teteDeForm {
+				margin:0;
+				padding:0;
+				border: 1px solid #c27ba0;
+				width : 100%;
+				height : 55px;
+				background-color : #c27ba0;
+			}
+
+
+			.nav {
+				list-style-type : none;
+				padding-left : 0;
+				margin-top : 0;
+				margin-left : 0;
+			} 
+			.nav li {
+				display: inline-block;
+				margin : 0;
+				padding : 0;
+			}
+
+
+			li .nomDeJueure {
+
+				width : 490px;
+				height : 36px;
+				color : white;
+				background-color : #c27ba0;
+			}
+			
+			.summInput {
+				border : none;
+				color : white;
+				background-color : #c27ba0;
+				border-bottom : 1px solid white;
+				font-size : 20px;
+				width : 100px;
+				text-align : right;
+			}
+			
+			.cadSumm {
+				color : white;
+				font-size : 17px;
+			}
+			
+			.modalDialogOf {
+				position: fixed;
+				font-family: Arial, Helvetica, sans-serif;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				background: rgba(0, 0, 0, 0.5);
+				z-index: 99999;
+				opacity:0;
+				pointer-events: none;
+			}
+			.modalDialogOn {
+				position: fixed;
+				font-family: Arial, Helvetica, sans-serif;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				background: rgba(0, 0, 0, 0.5);
+				z-index: 99999;
+				opacity:1;
+				pointer-events: auto;
+			}
+			.fenetreDeMessage {
+				width: 400px;
+				position: relative;
+				margin: 10% auto;
+				padding: 5px 20px 13px 20px;
+				border-radius: 2px;
+				background: #fff;
+			}
+			.close {
+				cursor:pointer;
+				padding-left : 360px;
+			}
+			
+			
+			.dropdown {
+				position: relative;
+				display: inline-block;
+			}
+
+			.dropdown-content {
+				display: none;
+				position: absolute;
+				background-color: #f9f9f9;
+				min-width: 160px;
+				overflow: auto;
+				box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+				z-index: 1;
+			}
+
+			.dropdown-content a {
+				color: black;
+				padding: 12px 16px;
+				text-decoration: none;
+				display: block;
+			}
+
+			.dropdown a:hover {background-color: #f1f1f1}
+
+			.show {display:block;}
+		
+		</style>
+		
+		<script>
+			//
+			//Programmeur Maksim Kotau 
+			// 10.11.2017
+			//
+		
+			var NOMBRE_MAXIMAL_DE_LOTERIE = 49;
+			var NOMBRE_MINIMAL_DE_LOTERIE = 1;
+			var QUANTITE_DE_NUMEROS_EN_TIRAGE = 6;
+			var COUT_DE_LA_TIRAGE = 10;
+			var PRIX_POUR_3_MATCHS = 10;
+			var PRIX_POUR_4_MATCHS = 85;
+			var PRIX_POUR_5_MATCHS = 2450;
+			var PRIX_POUR_6_MATCHS = 2050000;
+			var NOM_DE_JOUEUR = "";
+			var STATISTIQUE = [0,0,0,0,0,0,0];
+			
+			
+			var COMPTE_DE_JOUEUR = 100;
+			var MASSIF_DE_COMBINATIONDEJPUEUR = new Array();
+			var MASSIF_DE_TIRAGE;
+			
+			//La fonction renvoie un nombre aléatoire de 1 à N
+			function getTirege(N){
+				return (Math.floor(N*Math.random()+1));
+			}
+			
+			//La fonction vérifie la présence d'un nombre dans le massif
+			function siPresente(massif, numero){
+				for (var i=0;i<massif.length;i++){
+					if (massif[i]===numero){
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			//La fonction trie le MassifNionTriagee par la méthode de la bulle
+			function triageDeMassif(massifNonTriagee){
+				var varPourTriage;
+				for (var i=0; i < massifNonTriagee.length-1; i++){
+					for (var j=massifNonTriagee.length-1; j > i; j--){
+						if (massifNonTriagee[j] < massifNonTriagee[j-1]){
+							varPourTriage=massifNonTriagee[j];
+							massifNonTriagee[j]=massifNonTriagee[j-1];
+							massifNonTriagee[j-1]=varPourTriage;
+						}
+					}
+				
+				}
+				return massifNonTriagee;
+			}
+			
+			//La fonction renvoie un tableau de nombres aléatoires non répétés triés par ordre croissant.
+			function getMassifDeNumerosAleatoires(){
+				var quantiteDeNombresGeneres=0;
+				var massivDeNombresGeneres=new Array();
+				var nombreActuel;
+				while (quantiteDeNombresGeneres<QUANTITE_DE_NUMEROS_EN_TIRAGE){
+					nombreActuel=getTirege(NOMBRE_MAXIMAL_DE_LOTERIE);
+					if (!siPresente(massivDeNombresGeneres,nombreActuel)){
+						massivDeNombresGeneres.push(nombreActuel);
+						quantiteDeNombresGeneres+=1;
+					}
+				}
+				return triageDeMassif(massivDeNombresGeneres);
+			}
+
+			//La fonction remplit les champs avec des nombres par joueur.
+			function genererMaCombination(){
+				miseAZeroDesStylesDeTirage();
+				MASSIF_DE_COMBINATIONDEJPUEUR=getMassifDeNumerosAleatoires();
+				for (var i=1; i<=QUANTITE_DE_NUMEROS_EN_TIRAGE;i++){
+					document.getElementsByName("nomberEntree"+i)[0].value=MASSIF_DE_COMBINATIONDEJPUEUR[i-1];
+				}
+			}
+
+			//La fonction principale du début de la loterie.
+			function commencerTirage(){
+				miseAZeroDesStylesDeTirage();
+				if (COMPTE_DE_JOUEUR>=COUT_DE_LA_TIRAGE){
+					var combinationCoincident=new Array();
+					if (lireCombinasionDeJueur()){
+						changerBalance(-COUT_DE_LA_TIRAGE);
+						MASSIF_DE_TIRAGE=getMassifDeNumerosAleatoires();
+						for (var i=1; i<=QUANTITE_DE_NUMEROS_EN_TIRAGE;i++){
+							document.getElementsByName("nomberTirage"+i)[0].value=MASSIF_DE_TIRAGE[i-1];
+						}
+						for (var i=1;i<=QUANTITE_DE_NUMEROS_EN_TIRAGE;i++){
+							if (MASSIF_DE_TIRAGE.indexOf(MASSIF_DE_COMBINATIONDEJPUEUR[i-1])>-1){
+								combinationCoincident.push(MASSIF_DE_COMBINATIONDEJPUEUR[i-1]);
+							}
+						}
+						var positionGagneeDansTirage;
+						for (var i=0; i<combinationCoincident.length;i++){
+							positionGagneeDansTirage=MASSIF_DE_TIRAGE.indexOf(combinationCoincident[i])+1;
+							document.getElementsByName("nomberTirage"+positionGagneeDansTirage)[0].style.border='2px solid #9f4b73';
+							document.getElementsByName("nomberTirage"+positionGagneeDansTirage)[0].style.backgroundColor='#edd7e3';
+						}
+						var positionGagneeDansBillet;
+						for (var i=0; i<combinationCoincident.length;i++){
+							positionGagneeDansBillet=MASSIF_DE_COMBINATIONDEJPUEUR.indexOf(combinationCoincident[i])+1;
+							document.getElementsByName("nomberEntree"+positionGagneeDansBillet)[0].style.border='2px solid #9f4b73';
+							document.getElementsByName("nomberEntree"+positionGagneeDansBillet)[0].style.backgroundColor='#edd7e3';
+						}
+						vуrifierLeRуsultatDeTirage(combinationCoincident.length);
+					}
+				} else {
+					montrerDialogue ("Vous n'avez pas assez d'argent");
+				}
+			}
+			
+			//La fonction réinitialise les styles de champ pour la saisie après les erreurs et correspond à la loterie.
+			function miseAZeroDesStylesDeTirage(){
+				for (var i=1; i<=QUANTITE_DE_NUMEROS_EN_TIRAGE; i++){
+					document.getElementsByName("nomberTirage"+i)[0].style.border='1px solid #d4a3bd';
+					document.getElementsByName("nomberTirage"+i)[0].style.backgroundColor='white';
+					document.getElementsByName("nomberEntree"+i)[0].style.border='1px solid #d4a3bd';
+					document.getElementsByName("nomberEntree"+i)[0].style.backgroundColor='white';
+				}
+			
+			}
+			
+			//La fonction change la balance du joueur en summ
+			function changerBalance(summ){
+				COMPTE_DE_JOUEUR+=summ;
+				document.getElementsByClassName("summInput")[0].value=COMPTE_DE_JOUEUR;
+			}
+			
+			//La fonction vérifie l'exactitude des données saisies par l'utilisateur
+			function lireCombinasionDeJueur(){
+				if (onBlurValeurEntree()){
+					if (verifierLesCellulesVides()){
+						for (var i=1; i<=QUANTITE_DE_NUMEROS_EN_TIRAGE; i++){
+							MASSIF_DE_COMBINATIONDEJPUEUR[i-1]=parseInt(document.getElementsByName("nomberEntree"+i)[0].value);
+						}
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			//La fonction vérifie quand le jeu commence, si les cellules sont vides.
+			function verifierLesCellulesVides(){
+				var returnValue=true;
+				for (var i=1; i<=QUANTITE_DE_NUMEROS_EN_TIRAGE; i++){
+					if (document.getElementsByName('nomberEntree'+i)[0].value === ""){
+						document.getElementsByName("nomberEntree"+i)[0].style.border='2px solid red';
+						returnValue=false;
+					}
+				}
+				if (!returnValue){
+					montrerDialogue("Toutes les cellules doivent être remplies");
+				}
+				return returnValue;
+			}
+			
+			//La fonction ne permet pas d'entrer autre chose que des nombres dans les champs de loterie.
+			function onJoueurEntreeValeur(){
+				var nouvelleMassive = new Array();
+				for (var i=1; i<=QUANTITE_DE_NUMEROS_EN_TIRAGE; i++){
+					nouvelleMassive[i-1]=document.getElementsByName('nomberEntree'+i)[0].value;
+				}
+				var inputDeJeueur, inputDeJeueurNouvelle;
+				for (var i=0; i<QUANTITE_DE_NUMEROS_EN_TIRAGE; i++){
+					inputDeJeueur=nouvelleMassive[i];
+					inputDeJeueurNouvelle="";
+					for (var j=0; j<Math.min(2,inputDeJeueur.length); j++){
+						if ((j===0)&&(inputDeJeueur.charCodeAt(j)>=49)&&(inputDeJeueur.charCodeAt(j)<=57)){
+							 inputDeJeueurNouvelle+=inputDeJeueur.charAt(j);
+						}else if ((j===1)&&(inputDeJeueur.charCodeAt(j)>=48)&&(inputDeJeueur.charCodeAt(j)<=57)){
+							inputDeJeueurNouvelle+=inputDeJeueur.charAt(j);
+						}
+					}
+					document.getElementsByName('nomberEntree'+(i+1))[0].value=inputDeJeueurNouvelle;
+				}
+			}
+			
+			//La fonction vérifie l'exactitude des valeurs entrées du lecteur et trie en cas de perte de focus.
+			function onBlurValeurEntree(){
+				miseAZeroDesStylesDeTirage();
+				var massifDevaleursEntree=new Array();
+				for (var i=1; i<=QUANTITE_DE_NUMEROS_EN_TIRAGE; i++){
+					if (document.getElementsByName('nomberEntree'+i)[0].value!==""){
+						massifDevaleursEntree[i-1]=parseInt(document.getElementsByName('nomberEntree'+i)[0].value);
+					} else {
+						massifDevaleursEntree[i-1]=0;
+					}
+				}
+				triageDeMassif(massifDevaleursEntree);
+				for (var i=1; i<=QUANTITE_DE_NUMEROS_EN_TIRAGE; i++){
+					if (massifDevaleursEntree[i-1] === 0){
+						document.getElementsByName('nomberEntree'+i)[0].value="";
+					} else {
+						document.getElementsByName('nomberEntree'+i)[0].value=massifDevaleursEntree[i-1];
+					}
+				}
+				for (var i=0; i<QUANTITE_DE_NUMEROS_EN_TIRAGE; i++){
+					if (massifDevaleursEntree[i]>NOMBRE_MAXIMAL_DE_LOTERIE){
+						document.getElementsByName("nomberEntree"+(i+1))[0].style.border='2px solid red';	
+						montrerDialogue("Le nombre doit être supérieur à "+(NOMBRE_MINIMAL_DE_LOTERIE-1)+" et inférieur à "+(NOMBRE_MAXIMAL_DE_LOTERIE+1));
+						return false;
+					}
+				}
+				for (i=0; i<QUANTITE_DE_NUMEROS_EN_TIRAGE-1; i++){
+					if ((massifDevaleursEntree[i]!==0)&&(massifDevaleursEntree.indexOf(massifDevaleursEntree[i],i+1)!==-1)){
+						document.getElementsByName("nomberEntree"+(i+1))[0].style.border='2px solid red';
+						document.getElementsByName("nomberEntree"+(massifDevaleursEntree.indexOf(massifDevaleursEntree[i],i+1)+1))[0].style.border='2px solid red';
+						montrerDialogue("Les nombres doivent être uniques");
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			//La fonction lit le nom du joueur à partir de la chaîne de paramètres GET
+			function lireGetParameters(){
+				var get = location.search;
+				var commenceDePrenom=get.indexOf("prenom")+7;
+				var finDePrenom=get.indexOf("&", commenceDePrenom);
+				montrerDialogue ("Bonjour, "+get.substring(commenceDePrenom,finDePrenom));
+				document.getElementsByClassName("nomDeJueure")[0].innerHTML="Bonjour, "+get.substring(commenceDePrenom,finDePrenom);
+			}
+	
+			//La fonction calcule le nombre de nombres devinés par le joueur.
+			function vуrifierLeRуsultatDeTirage(numerosСorrespondants){
+				switch (numerosСorrespondants){
+						case 0:
+							montrerDialogue ("Malheureusement, vous n'avez rien gagné");	
+							STATISTIQUE[0]=STATISTIQUE[0]+1;
+							break;
+						case 1:
+							montrerDialogue ("Seulement 1 coïncidence! Vous n'avez rien gagné");
+							STATISTIQUE[1]=STATISTIQUE[1]+1;
+							break;
+						case 2:
+							montrerDialogue ("Seulement 2 coïncidence! Vous n'avez rien gagné");
+							STATISTIQUE[2]=STATISTIQUE[2]+1;
+							break;
+						case 3:
+							montrerDialogue ("BRAVO! 3 coïncidence! Vous avez gagné " + PRIX_POUR_3_MATCHS+ " CAD");
+							STATISTIQUE[3]=STATISTIQUE[3]+1;
+							changerBalance(PRIX_POUR_3_MATCHS);
+							break;
+						case 4:
+							montrerDialogue ("BRAVO! 4 coïncidence! Vous avez gagné " + PRIX_POUR_4_MATCHS+ " CAD");
+							STATISTIQUE[4]=STATISTIQUE[4]+1;
+							changerBalance(PRIX_POUR_4_MATCHS);
+							break;
+						case 5:
+							montrerDialogue ("BRAVO! 5 coïncidence! Vous avez gagné " + PRIX_POUR_5_MATCHS+ " CAD");
+							STATISTIQUE[5]=STATISTIQUE[5]+1;
+							changerBalance(PRIX_POUR_5_MATCHS);
+							break;
+						case 6:
+							montrerDialogue ("BRAVO! 6 coïncidence! Vous avez gagné " + PRIX_POUR_6_MATCHS+ " CAD");
+							STATISTIQUE[6]=STATISTIQUE[6]+1;
+							changerBalance(PRIX_POUR_6_MATCHS);
+							break;
+				}
+			}
+			
+			//La fonction limite la saisie de tous les caractères sauf les chiffres dans le champ du compte du joueur
+			function inputInSumm(){
+				var summEntree=document.getElementsByClassName("summInput")[0].value;
+				var nouvelleSumm="";
+				for (var i=0; i<summEntree.length; i++){
+					if ((summEntree.charCodeAt(i)>=48)&&(summEntree.charCodeAt(i)<=57)){
+						nouvelleSumm+=summEntree.charAt(i);
+					}
+				}
+				document.getElementsByClassName("summInput")[0].value=nouvelleSumm;
+			}
+			
+			//La fonction ne vous permet pas d'augmenter le solde à une somme inférieure à 100CAD
+			function blurDeSumm(){
+				var nouvelleBalance=parseInt(document.getElementsByClassName("summInput")[0].value);
+				if (nouvelleBalance<100){
+					montrerDialogue("Entrez un montant supérieur à 100 CAD");
+					document.getElementsByClassName("summInput")[0].value=COMPTE_DE_JOUEUR;
+				} else {
+					COMPTE_DE_JOUEUR=nouvelleBalance;
+				}
+			}
+			
+			//Afficher la fenêtre modale
+			function montrerDialogue(text){
+				document.getElementsByClassName("textMessage")[0].innerHTML=text;
+				document.getElementById("openModal").setAttribute("class","modalDialogOn");
+			}
+			
+			//Masquer la fenêtre modale
+			function fermerFenetrModal(){
+				document.getElementById("openModal").setAttribute("class","modalDialogOf");
+			}
+			
+			//Afficher le menu
+			function showMenue() {
+				document.getElementById("myDropdown").classList.toggle("show");
+			}
+			
+			//Masquer le menu
+			window.onclick = function(event) {
+			  if (!event.target.matches('.dropbtn')) {
+
+				var dropdowns = document.getElementsByClassName("dropdown-content");
+				for (var i = 0; i < dropdowns.length; i++) {
+					var openDropdown = dropdowns[i];
+					if (openDropdown.classList.contains('show')) {
+						openDropdown.classList.remove('show');
+					}	
+				}
+			  }
+			}
+			
+		</script>
+		</script>
+	</head>
+			
+	
+			
+	<body onload="lireGetParameters()">		
+		<div id="openModal" class="modalDialogOf">
+			<div class="fenetreDeMessage">	
+				<p class="textMessage"></p>
+				<p class="contClose"><a title="Close" class="close" onclick="fermerFenetrModal()">OK</a></p>
+			</div>
+		</div>
+		<div class="blockDeJeu">	
+			<div class="teteDeForm">
+				<ul class="nav">
+					<li>
+						<div class="dropdown">
+							<button onclick="showMenue()" class="dropbtn">&#9776</button>
+							<div id="myDropdown" class="dropdown-content">
+								<a onclick="montrerDialogue('Ce jeu est un simulateur de la loterie classique 6/49.<br><br> Programmeur  Maksim Kotau')">About</a>
+								<a onclick="montrerDialogue('0 coïncidence_______________'+STATISTIQUE[0]+' fois <br>'+
+															'1 coïncidences______________'+STATISTIQUE[1]+' fois <br>'+
+															'2 coïncidences______________'+STATISTIQUE[2]+' fois <br>'+								
+															'3 coïncidences______________'+STATISTIQUE[3]+' fois <br>'+
+															'4 coïncidences______________'+STATISTIQUE[4]+' fois <br>'+								
+															'5 coïncidences______________'+STATISTIQUE[5]+' fois <br>'+								
+															'6 coïncidences______________'+STATISTIQUE[6]+' fois <br>'							
+								)">Statistique</a>
+							</div>
+						</div>
+					</li>
+					<li>
+						<p class="nomDeJueure"></p>
+					</li>
+					<li>
+						<input type="text" class="summInput" value="100" oninput="inputInSumm()" onblur="blurDeSumm()">
+					</li>
+					<li>
+						<p class="cadSumm">CAD</p>
+					</li>
+				</ul>
+			</div>
+			<form>
+				<table class = "tableDeJeu">
+					<tr class="teteDeTable">
+						<td colspan="6">VOTRE CHOIX</td>
+					</tr>
+					<tr class = "ligneDeNumberEntree">
+						<td>
+							<input type="text" name="nomberEntree1" oninput="onJoueurEntreeValeur()" onblur="onBlurValeurEntree()">
+						</td>
+						<td>
+							<input type="text" name="nomberEntree2" oninput="onJoueurEntreeValeur()" onblur="onBlurValeurEntree()">
+						</td>
+						<td>
+							<input type="text" name="nomberEntree3" oninput="onJoueurEntreeValeur()" onblur="onBlurValeurEntree()">
+						</td>
+						<td>
+							<input type="text" name="nomberEntree4" oninput="onJoueurEntreeValeur()" onblur="onBlurValeurEntree()">
+						</td>
+						<td>
+							<input type="text" name="nomberEntree5" oninput="onJoueurEntreeValeur()" onblur="onBlurValeurEntree()">
+						</td>
+						<td>
+							<input type="text" name="nomberEntree6" oninput="onJoueurEntreeValeur()" onblur="onBlurValeurEntree()">
+						</td>
+					</tr>
+					<tr class="teteDeTable">
+						<td colspan="6">RÉSULTAT DE TIRAGE</td>
+					</tr>
+					<tr class = "ligneDeTirage">
+						<td>
+							<input type="text" name="nomberTirage1" readonly>
+						</td>
+						<td>
+							<input type="text" name="nomberTirage2" readonly>
+						</td>
+						<td>
+							<input type="text" name="nomberTirage3" readonly>
+						</td>
+						<td>
+							<input type="text" name="nomberTirage4" readonly>
+						</td>
+						<td>
+							<input type="text" name="nomberTirage5" readonly>
+						</td>
+						<td>
+							<input type="text" name="nomberTirage6" readonly>
+						</td>
+					</tr>
+					<tr class = "ligneDeButton">
+						<td colspan="3"><input class="button" type="button" value="Démarrer le jeu" onclick="commencerTirage()"></td>
+						<td colspan="3"><input class="button" type="button" value="Générer ma combinaison" onclick="genererMaCombination()"></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</body>
+</html>
